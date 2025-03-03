@@ -5,21 +5,17 @@ int playerInput; // a number the player inputs
 int* playerinputlocation = &playerInput; // used to get the input from scanf
 int wordlen; // length of the word the player guesses
 int* wordlenloc = &wordlen; // 
-int guessesWrong = 0;
-int guessesWrong2 = 0;
+int guessesWrong = 0; // guesses wrong for player 1
 int missed = 0;
 int lettersCorrect;
 
 char letterInput;
 char letterInputLocation;
 char stringInput[11];
-char stringInput2[11];
 char guessed[20];
-char guessed2[20];
 char incorrectGuesses[8];
 char incorrectGuesses2[8];
 char guessedLetter;
-
 
 void printHangman(int guess) {
     switch (guess) {
@@ -83,7 +79,6 @@ void printHangman(int guess) {
 }
 
 void makeGuess() {
-    printf("\033[2J\n");
     printHangman(guessesWrong);
     // print out wrong guesses
     printf("you have guessed \033[1;31m%d\033[0;37m letters wrong, those letters were: \033[1;31m", guessesWrong);
@@ -92,8 +87,9 @@ void makeGuess() {
         printf("\033[1;31m%c\033[0;37m, ", incorrectGuesses[i]);
     }
     printf("\033[0;37m\nYou have currently guessed %s\nPlease input your guess\n", guessed);
-    scanf(" %c", &guessedLetter);
-
+    scanf(" %c", &guessedLetter); // take new input
+    
+    // run through each letter of the word and check if it equals the guessed letter
     missed = 0;
     for (int i = 0; i<wordlen; i++){
         (stringInput[i] == guessedLetter) ? guessed[i]=guessedLetter: missed++;
@@ -104,26 +100,30 @@ void makeGuess() {
     }
 }
 
-void makeGuess2() {
-    printf("\033[2J\n");
-    printHangman(guessesWrong2);
-    // print out wrong guesses
-    printf("you have guessed \033[1;31m%d\033[0;37m letters wrong, those letters were: \033[1;31m", guessesWrong2);
+void twoPlayerGuess(char player2sWordToGuess[11], char player1sWordToGuess[11], char player1sGuessed[11], char player2sGuessed[11], int player1Guesseswrong, int player2Guesseswrong) {
+    // player 1's turn
+    printf("\033[2JPlayer 1's turn\n");
+    printHangman(player1Guesseswrong);
+    printf("you have guessed \033[1;31m%d\033[0;37m letters wrong, those letters were: \033[1;31m", player1Guesseswrong);
 
-    for (int i = 0; i< guessesWrong2; i++) {
-        printf("\033[1;31m%c\033[0;37m, ", incorrectGuesses2[i]);
+    for (int i = 0; i< guessesWrong; i++) {
+        printf("\033[1;31m%c\033[0;37m, ", incorrectGuesses[i]);
     }
-    printf("\033[0;37m\nYou have currently guessed %s\nPlease input your guess\n", guessed2);
-    scanf(" %c", &guessedLetter);
+    printf("\033[0;37m\nYou have currently guessed %s\nPlease input your guess\n", guessed);
+    scanf(" %c", &guessedLetter); // take new input
 
-    missed = 0;
-    for (int i = 0; i<wordlen; i++){
-        (stringInput2[i] == guessedLetter) ? guessed2[i]=guessedLetter: missed++;
+    // run through each letter of the word and check if it equals the letter
+    missed = 0; // make sure this is 0 before hand
+    for (int i = 0; i < wordlen; i++){
+        (player1sWordToGuess == letterInput) ? player1sGuessed[i] == letterInput : missed ++ ;
     }
-    if (missed == wordlen){
-        guessesWrong2++;
-        incorrectGuesses[guessesWrong2 - 1] = guessedLetter;
+
+    if (missed == wordlen) {
+        player1Guesseswrong ++;
     }
+    
+    // player 2's turn
+    
 }
 
 void onePlayer() {
@@ -180,6 +180,7 @@ int singleGuesser() {
 
 
     while (1) {
+        printf("\033[2J\n");
         makeGuess();
         // check if they lose
         if (guessesWrong >= 7) {
@@ -205,110 +206,93 @@ int singleGuesser() {
     }
 }
 
-void competetiveGuessing() {
+int competetiveGuessing() {
+    char player2sWordToGuess[11];
+    char player1sWordToGuess[11];
+
+    char player1sGuessed[11];
+    char player2sGuessed[11];
+
+    int player1Guesseswrong;
+    int player2Guesseswrong;
+
     printf("Welcome to competetive guessing, decide on than input a word length\n");
     scanf(" %d", wordlenloc);
     printf("\033[2JYour word will be %d letters long. Player 1 input a word that is %d letters long\n", wordlen, wordlen);
-    switch (wordlen) {
+    switch (wordlen) {  // take the input and put it into player2sWordToGuess, because player 1 inputs player2's word
         case 1:
-            scanf("%1s", stringInput2);
+            scanf("%1s", player2sWordToGuess);
             break;
         case 2:
-            scanf("%2s", stringInput2);
+            scanf("%2s", player2sWordToGuess);
             break;
         case 3:
-            scanf("%3s", stringInput2);
+            scanf("%3s", player2sWordToGuess);
             break;
         case 4:
-            scanf("%4s", stringInput2);
+            scanf("%4s", player2sWordToGuess);
             break;
         case 5:
-            scanf("%5s", stringInput2);
+            scanf("%5s", player2sWordToGuess);
             break;
         case 6:
-            scanf("%6s", stringInput2);
+            scanf("%6s", player2sWordToGuess);
             break;
         case 7:
-            scanf("%7s", stringInput2);
+            scanf("%7s", player2sWordToGuess);
             break;
         case 8:
-            scanf("%8s", stringInput2);
+            scanf("%8s", player2sWordToGuess);
             break;
         case 9:
-            scanf("%9s", stringInput2);
+            scanf("%9s", player2sWordToGuess);
             break;
         case 10:
-            scanf("%10s", stringInput2);
+            scanf("%10s", player2sWordToGuess);
             break;
     }
 
-    // prep the word with -'s for guessing
-    for (int i = 0; i < wordlen; i++) {
-        guessed[i] = '-';
-    }
-
-    //clear the screen then take player two's input
-    printf("\033[2JYour word will be %d letters long. Player 2 input a word that is %d letters long\n", wordlen, wordlen);
-    switch (wordlen) {
+    printf("\033[2JYour word will be %d letters long. Player 1 input a word that is %d letters long\n", wordlen, wordlen);
+    switch (wordlen) {  // take the input and put it into player1sWordToGuess, because player 2 inputs player1's word
         case 1:
-            scanf("%1s", stringInput);
+            scanf("%1s", player1sWordToGuess);
             break;
         case 2:
-            scanf("%2s", stringInput);
+            scanf("%2s", player1sWordToGuess);
             break;
         case 3:
-            scanf("%3s", stringInput);
+            scanf("%3s", player1sWordToGuess);
             break;
         case 4:
-            scanf("%4s", stringInput);
+            scanf("%4s", player1sWordToGuess);
             break;
         case 5:
-            scanf("%5s", stringInput);
+            scanf("%5s", player1sWordToGuess);
             break;
         case 6:
-            scanf("%6s", stringInput);
+            scanf("%6s", player1sWordToGuess);
             break;
         case 7:
-            scanf("%7s", stringInput);
+            scanf("%7s", player1sWordToGuess);
             break;
         case 8:
-            scanf("%8s", stringInput);
+            scanf("%8s", player1sWordToGuess);
             break;
         case 9:
-            scanf("%9s", stringInput);
+            scanf("%9s", player1sWordToGuess);
             break;
         case 10:
-            scanf("%10s", stringInput);
+            scanf("%10s", player1sWordToGuess);
             break;
     }
-    
-    // prep player 2's word with -'s for guessing
+
+
+    // prep both words -'s for guessing
     for (int i = 0; i < wordlen; i++) {
-        guessed2[i] = '-';
+        player1sGuessed[i] = '-';
+        player2sGuessed[i] = '-';
     }
 
-    // function loop
-    while (1){
-        // have player 1 guess
-        makeGuess();
-        // have player 2 guess
-        makeGuess2();
-
-        // check endgame conditions for both players
-        if (guessesWrong >= 7) { // if player 1 loses
-            printf("\033[2J\n");
-            printHangman(guessesWrong);
-            printf("\033[1;5;31mGAME OVER\n\033[37;0mYou guessed: \033[1;31m%s\033[37;0m, the full word was: \033[0;32m%s\n", guessed, stringInput);
-            return 0;
-        }
-        if (guessesWrong2 >= 7) { // if player 2 loses
-            printf("\033[2J\n");
-            printHangman(guessesWrong);
-            printf("\033[1;5;31mGAME OVER\n\033[37;0mYou guessed: \033[1;31m%s\033[37;0m, the full word was: \033[0;32m%s\n", guessed, stringInput);
-            return 0;
-        }
-    }
-    
 }
 
 void twoPlayer() {
