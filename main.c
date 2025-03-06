@@ -110,7 +110,7 @@ void makeGuess() {
     }
 }
 
-void twoPlayerGuess() {
+int twoPlayerGuess1() {
     // player 1's turn
     printf("\n\033[2JPlayer 1's turn\n");
     printHangman(player1Guesseswrong);
@@ -126,14 +126,16 @@ void twoPlayerGuess() {
     // run through each letter of the given word to check if it equals the letter that the player guessed
     missed = 0;
     for (int i = 0; i < wordlen; i++) {
-        (guessedLetter == player1sGuessed[i])? printf("\nrepeat letter guess"): (guessedLetter == player1sWordToGuess[i])? player1sGuessed[i] = guessedLetter: missed++;
+        (guessedLetter == player1sWordToGuess[i])? player1sGuessed[i] = guessedLetter: missed++;
     }
     if (missed >= wordlen) {
         player1Guesseswrong ++;
         incorrectGuesses[player1Guesseswrong - 1] = guessedLetter;
     }
-    
-    // player 2's turn ------------------------------
+    return 0;
+}
+void twoPlayerGuess2() {
+    // player two's guess
     printf("\n\033[2JPlayer 2's turn\n");
     printHangman(player2Guesseswrong);
     printf("you have guessed %d letters wrong, those letters were:", player2Guesseswrong);
@@ -317,7 +319,8 @@ int competetiveGuessing() {
 
     // main loop
     while (1) {
-        twoPlayerGuess();
+        twoPlayerGuess1();
+        twoPlayerGuess2();
 
         if (player1Guesseswrong == 7) {
             printf("\033[2JGameOver");
